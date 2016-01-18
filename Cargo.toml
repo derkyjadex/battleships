@@ -1,0 +1,14 @@
+[package]
+name = "battleships"
+version = "0.1.0"
+authors = ["James Deery <james.deery@jadex.org>"]
+
+[dependencies]
+glium = "*"
+rand = "*"
+
+[dependencies.aldata]
+path = "../aldata"
+
+[dependencies.alice]
+path = "../alice-rs"
