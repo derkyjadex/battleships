@@ -165,15 +165,15 @@ impl MyBoard {
                         curve_bias: 0.0
                     },
                     Point {
-                        location: ((j + 1) as f64 * 50.0, i as f64 * 50.0),
+                        location: ((j + 1) as f64 * 50.0 - 5.0, i as f64 * 50.0),
                         curve_bias: 0.0
                     },
                     Point {
-                        location: ((j + 1) as f64 * 50.0, (i + 1) as f64 * 50.0),
+                        location: ((j + 1) as f64 * 50.0 - 5.0, (i + 1) as f64 * 50.0 - 5.0),
                         curve_bias: 0.0
                     },
                     Point {
-                        location: (j as f64 * 50.0, (i + 1) as f64 * 50.0),
+                        location: (j as f64 * 50.0, (i + 1) as f64 * 50.0 - 5.0),
                         curve_bias: 0.0
                     },
                     ];
@@ -217,15 +217,15 @@ impl TheirBoard {
                         curve_bias: 0.0
                     },
                     Point {
-                        location: ((j + 1) as f64 * 50.0, i as f64 * 50.0),
+                        location: ((j + 1) as f64 * 50.0 - 5.0, i as f64 * 50.0),
                         curve_bias: 0.0
                     },
                     Point {
-                        location: ((j + 1) as f64 * 50.0, (i + 1) as f64 * 50.0),
+                        location: ((j + 1) as f64 * 50.0 - 5.0, (i + 1) as f64 * 50.0 - 5.0),
                         curve_bias: 0.0
                     },
                     Point {
-                        location: (j as f64 * 50.0, (i + 1) as f64 * 50.0),
+                        location: (j as f64 * 50.0, (i + 1) as f64 * 50.0 - 5.0),
                         curve_bias: 0.0
                     },
                     ];
