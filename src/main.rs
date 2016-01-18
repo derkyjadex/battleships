@@ -13,14 +13,30 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:1234").unwrap();
-    for stream in listener.incoming() {
-        run(&mut stream.unwrap());
+    let mode = std::env::args().nth(1).unwrap();
+    if mode == "server" {
+        server();
+    } else if mode == "client" {
+        client();
+    } else {
+        println!("choose client or server");
     }
 }
 
-fn run(stream: &mut TcpStream) {
-    let mut mine = MyBoard {
+fn server() {
+    let listener = TcpListener::bind("127.0.0.1:1234").unwrap();
+    for stream in listener.incoming() {
+        run(&mut stream.unwrap(), true);
+    }
+}
+
+fn client() {
+    let mut stream = TcpStream::connect("127.0.0.1:1234").unwrap();
+    run(&mut stream, false);
+}
+
+fn run(stream: &mut TcpStream, starting: bool) {
+    let mine = MyBoard {
         squares: [
             [false, false, false, false, false, false, false, false, false, false],
             [false, false, false, false, false, false, false, false, false, false],
@@ -39,6 +55,8 @@ fn run(stream: &mut TcpStream) {
         squares: [[FireResult::None; SIZE]; SIZE]
     };
 
+    let mut bombs = Bombs::new();
+
     let display = glium::glutin::WindowBuilder::new()
         .with_title(format!("Battleships"))
         .with_dimensions(1050, 500)
@@ -51,6 +69,7 @@ fn run(stream: &mut TcpStream) {
     renderer.set_size(1050.0, 500.0);
 
     let mut mouse_pos = (0, 0);
+    let mut our_turn = starting;
 
     loop {
         let mut target = display.draw();
@@ -62,7 +81,27 @@ fn run(stream: &mut TcpStream) {
         let theirs_model = prepare_model(&display, &theirs.render());
         renderer.draw(&mut target, 550.0, 0.0, 1.0, &theirs_model);
 
+        let bombs_model = prepare_model(&display, &bombs.render());
+        renderer.draw(&mut target, 0.0, 0.0, 1.0, &bombs_model);
+
         target.finish().unwrap();
+
+        if !our_turn {
+            let mut buffer = [0; 4];
+            assert_eq!(4, stream.read(&mut buffer).unwrap());
+            let i = (buffer[0] - b'0') as usize;
+            let j = (buffer[2] - b'0') as usize;
+            if mine.squares[i][j] {
+                let buffer = "h\n".bytes().collect::<Vec<_>>();
+                stream.write_all(&buffer).unwrap();
+            } else {
+                let buffer = "m\n".bytes().collect::<Vec<_>>();
+                stream.write_all(&buffer).unwrap();
+            }
+            bombs.push(i, j);
+
+            our_turn = true;
+        }
 
         for ev in display.poll_events() {
             match ev {
@@ -71,7 +110,7 @@ fn run(stream: &mut TcpStream) {
                 Event::MouseMoved(pos) => {
                     mouse_pos = pos;
                 },
-                Event::MouseInput(ElementState::Pressed, MouseButton::Left) => {
+                Event::MouseInput(ElementState::Pressed, MouseButton::Left) if our_turn => {
                     let f = window.hidpi_factor();
                     let (x, y) = mouse_pos;
                     let x = x as f32 / f;
@@ -95,6 +134,7 @@ fn run(stream: &mut TcpStream) {
                         _ => FireResult::None,
                     };
                     theirs.squares[i][j] = result;
+                    our_turn = false;
                 }
                 _ => ()
             }
@@ -199,5 +239,53 @@ impl TheirBoard {
         Model {
             paths: paths
         }
+    }
+}
+
+struct Bombs {
+    bombs: Vec<(usize, usize)>
+}
+
+impl Bombs {
+    pub fn new() -> Bombs {
+        Bombs { bombs: Vec::new() }
+    }
+
+    pub fn render(&self) -> Model {
+        let mut paths = Vec::new();
+        for (i, j) in self.bombs.clone() {
+            let colour = (0.9, 0.7, 0.0);
+            let points = vec![
+                Point {
+                    location: (j as f64 * 50.0, i as f64 * 50.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: ((j + 1) as f64 * 50.0, i as f64 * 50.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: ((j + 1) as f64 * 50.0, (i + 1) as f64 * 50.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: (j as f64 * 50.0, (i + 1) as f64 * 50.0),
+                    curve_bias: 0.5
+                },
+            ];
+
+            paths.push(Path {
+                colour: colour,
+                points: points
+            })
+        }
+
+        Model {
+            paths: paths
+        }
+    }
+
+    pub fn push(&mut self, i: usize, j: usize) {
+        self.bombs.push((i, j));
     }
 }
