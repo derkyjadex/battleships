@@ -27,6 +27,7 @@ fn server() {
     let listener = TcpListener::bind("127.0.0.1:1234").unwrap();
     for stream in listener.incoming() {
         run(&mut stream.unwrap(), true);
+        break;
     }
 }
 
@@ -277,7 +278,32 @@ impl Bombs {
             paths.push(Path {
                 colour: colour,
                 points: points
-            })
+            });
+
+            let colour = (0.9, 0.5, 0.0);
+            let points = vec![
+                Point {
+                    location: (j as f64 * 50.0 + 10.0, i as f64 * 50.0 + 10.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: ((j + 1) as f64 * 50.0 - 10.0, i as f64 * 50.0 + 10.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: ((j + 1) as f64 * 50.0 - 10.0, (i + 1) as f64 * 50.0 - 10.0),
+                    curve_bias: 0.5
+                },
+                Point {
+                    location: (j as f64 * 50.0 + 10.0, (i + 1) as f64 * 50.0 - 10.0),
+                    curve_bias: 0.5
+                },
+            ];
+
+            paths.push(Path {
+                colour: colour,
+                points: points
+            });
         }
 
         Model {
