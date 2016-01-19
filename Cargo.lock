@@ -2,8 +2,7 @@
 name = "battleships"
 version = "0.1.0"
 dependencies = [
- "aldata 0.1.0",
- "alice 0.1.0",
+ "alice 0.1.0 (git+https://github.com/derkyjadex/alice-rs.git)",
  "glium 0.13.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -18,17 +17,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "aldata"
-version = "0.1.0"
-dependencies = [
- "byteorder 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "alice"
 version = "0.1.0"
+source = "git+https://github.com/derkyjadex/alice-rs.git#631493df9c08ae9667ee10650010f47de684ddef"
 dependencies = [
- "aldata 0.1.0",
+ "byteorder 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "glium 0.13.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.3.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

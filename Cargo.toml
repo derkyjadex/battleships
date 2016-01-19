@@ -6,9 +6,4 @@ authors = ["James Deery <james.deery@jadex.org>"]
 [dependencies]
 glium = "*"
 rand = "*"
-
-[dependencies.aldata]
-path = "../aldata"
-
-[dependencies.alice]
-path = "../alice-rs"
+alice = { git = "https://github.com/derkyjadex/alice-rs.git" }

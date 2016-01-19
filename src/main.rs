@@ -1,14 +1,12 @@
 #[macro_use]
 extern crate glium;
 extern crate alice;
-extern crate aldata;
 
 use glium::{DisplayBuild, Surface};
 use glium::glutin::{Event, ElementState, VirtualKeyCode, MouseButton};
 use alice::model::rendering::{ModelRenderer, prepare_model};
 use alice::model::{Model, Path, Point};
 use std::io::{Read, Write};
-//use aldata::{Vec2, Vec3};
 
 use std::net::{TcpListener, TcpStream};
 
